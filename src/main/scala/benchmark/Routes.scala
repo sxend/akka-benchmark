@@ -9,9 +9,8 @@ class Routes(env: {
   val config: Config
 }) {
   private val handler = env.handler
-  private val hello = (get & path("hello"))(handler.hello)
-  private val receptionist = (get & path("receptionist"))(handler.askReceptionist)
-  private val actor = (get & path("actor"))(handler.askActor)
-  private val askBenchmark = pathPrefix("ask")(receptionist ~ actor)
-  def asRoute: Route = hello ~ askBenchmark
+  private val askClient = (get & path("client"))(handler.askClient)
+  private val askActor = (get & path("actor"))(handler.askActor)
+  private val askBenchmark = pathPrefix("ask")(askClient ~ askActor)
+  def asRoute: Route = askBenchmark
 }

@@ -1,7 +1,7 @@
 
 organization := "arimitsu.sf"
 
-name := "scala-benchmark"
+name := "akka-benchmark"
 
 version := "0.0.1-SNAPSHOT"
 
