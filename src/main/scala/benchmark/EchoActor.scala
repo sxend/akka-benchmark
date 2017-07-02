@@ -1,10 +1,7 @@
 package benchmark
 
-import java.util.concurrent.atomic.AtomicReference
-
 import akka.actor.{ Actor, ActorLogging, ActorRef, ActorSystem, Props }
-import akka.cluster.client.{ ClusterClient, ClusterClientReceptionist, ClusterClientSettings }
-import akka.cluster.sharding.ShardRegion.{ HashCodeMessageExtractor, MessageExtractor }
+import akka.cluster.client.ClusterClientReceptionist
 import akka.cluster.sharding.{ ClusterSharding, ClusterShardingSettings, ShardRegion }
 
 class EchoActor extends Actor with ActorLogging {
@@ -22,13 +19,6 @@ object EchoActor {
   }
   val extractShardId: ShardRegion.ExtractShardId = {
     case msg => msg.toString
-  }
-  private var client: ActorRef = _
-  def shardClient(implicit system: ActorSystem) = {
-    if (client == null) {
-      client = system.actorOf(ClusterClient.props(ClusterClientSettings(system)))
-    }
-    client
   }
   def startRegion(implicit system: ActorSystem) = {
     registerService(ClusterSharding(system).start(

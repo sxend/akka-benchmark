@@ -1,6 +1,7 @@
 package benchmark
 
 import akka.actor.{ ActorRef, ActorSystem }
+import akka.cluster.client.{ ClusterClient, ClusterClientSettings }
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
@@ -16,7 +17,7 @@ object Bootstrap {
           val system: ActorSystem = _system
           val config: Config = _config
           val echoActor: () => ActorRef = () => EchoActor.shardProxy
-          val echoActorClient: () => ActorRef = () => EchoActor.shardClient
+          val clusterClient: () => ActorRef = () => system.actorOf(ClusterClient.props(ClusterClientSettings(system)))
           val handler: Handler = new Handler(this)
           val routes: Routes = new Routes(this)
         }
