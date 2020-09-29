@@ -31,10 +31,11 @@ object Main {
     import system.executionContext
     val cluster = Cluster(system)
     val sharding = ClusterSharding(system)
+    sharding.init(Entity(TypeKey)(createBehavior = entityContext => Behaviors.supervise(Echo(entityContext.entityId)).onFailure(SupervisorStrategy.resume)).withRole("worker"))
     if (cluster.selfMember.roles.contains("seed")) {
       val entityRef = sharding.entityRefFor(TypeKey, UUID.randomUUID().toString)
       val route =
-        path("/endpoint") {
+        path("endpoint") {
           get {
             onComplete(entityRef.ask(ref => Echo.Envelope(RandomStringUtils.randomAlphanumeric(10000), ref))) {
               case Success(response) => complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, response.message))
@@ -46,7 +47,6 @@ object Main {
         }
       Http().newServerAt("localhost", 8080).bind(route)
     } else if (cluster.selfMember.roles.contains("worker")) {
-      sharding.init(Entity(TypeKey)(createBehavior = entityContext => Behaviors.supervise(Echo(entityContext.entityId)).onFailure(SupervisorStrategy.resume)).withRole("worker"))
     }
   }
 }
@@ -54,9 +54,12 @@ object Echo {
   sealed trait Command
   final case class Envelope(message: String, replyTo: ActorRef[Response]) extends Command with Serializable
   final case class Response(message: String)
-  def apply(entityId: String): Behavior[Command] = Behaviors.receiveMessage[Command] {
-    case Envelope(message, replyTo) =>
-      replyTo ! Response(s"reply[$entityId] $message")
-      Behaviors.same
+  def apply(entityId: String): Behavior[Command] = Behaviors.setup { context =>
+    Behaviors.receiveMessage[Command] {
+      case Envelope(message, replyTo) =>
+        context.log.debug("coming message")
+        replyTo ! Response(s"reply[$entityId] $message")
+        Behaviors.same
+    }
   }
 }
