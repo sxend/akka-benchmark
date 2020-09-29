@@ -26,17 +26,18 @@ object Main {
   val TypeKey = EntityTypeKey[Echo.Command]("Echo")
   def main(args: Array[String]): Unit = {
     val config = ConfigFactory.load
-    println(config.getList("akka.cluster.seed-nodes"))
     implicit val system = ActorSystem(Behaviors.empty, "benchmark-system")
+    system.log.info(config.getList("akka.cluster.seed-nodes").toString)
     import system.executionContext
     val cluster = Cluster(system)
     val sharding = ClusterSharding(system)
     sharding.init(Entity(TypeKey)(createBehavior = entityContext => Behaviors.supervise(Echo(entityContext.entityId)).onFailure(SupervisorStrategy.resume)).withRole("worker"))
     if (cluster.selfMember.roles.contains("seed")) {
-      val entityRef = sharding.entityRefFor(TypeKey, UUID.randomUUID().toString)
+
       val route =
         path("endpoint") {
           get {
+            val entityRef = sharding.entityRefFor(TypeKey, UUID.randomUUID().toString)
             onComplete(entityRef.ask(ref => Echo.Envelope(RandomStringUtils.randomAlphanumeric(10000), ref))) {
               case Success(response) => complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, response.message))
               case Failure(t) =>
