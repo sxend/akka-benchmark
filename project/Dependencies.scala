@@ -22,4 +22,7 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
     "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
   )
+  lazy val utils = Seq(
+    "org.apache.commons" % "commons-lang3" % "3.11"
+  )
 }

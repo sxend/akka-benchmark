@@ -9,7 +9,7 @@ ThisBuild / organizationName := "io.sxend"
 lazy val root = (project in file("."))
   .settings(
     name := "akka-benchmark",
-    libraryDependencies ++= (scalaTest ++ loggers ++ akka),
+    libraryDependencies ++= (scalaTest ++ loggers ++ akka ++ utils),
     mainClass in assembly := Some("io.sxend.akka_benchmark.Main"),
     assemblyJarName in assembly := "benchmark.jar",
     assemblyMergeStrategy in assembly := {
