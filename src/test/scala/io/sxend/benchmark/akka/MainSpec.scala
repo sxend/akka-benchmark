@@ -1,4 +1,4 @@
-package io.sxend.akka_benchmark
+package io.sxend.benchmark.akka
 
 import org.scalatest._
 import flatspec._
