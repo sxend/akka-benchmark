@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  lazy val AkkaVersion = "2.6.8"
+  lazy val AkkaVersion = "2.6.9"
   lazy val AkkaHttpVersion = "10.2.0"
   lazy val scalaTest = Seq("org.scalatest" %% "scalatest" % "3.2.0" % Test)
   lazy val loggers = Seq(
@@ -20,7 +20,9 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-cluster-sharding-typed" % AkkaVersion,
     "com.typesafe.akka" %% "akka-serialization-jackson" % AkkaVersion,
     "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
-    "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
+    "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
+    "com.typesafe.akka" %% "akka-remote" % AkkaVersion,
+    "io.netty" % "netty" % "3.10.6.Final"
   )
   lazy val utils = Seq(
     "org.apache.commons" % "commons-lang3" % "3.11"
